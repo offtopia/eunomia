@@ -13,6 +13,8 @@ class ProposalType(Enum):
 	PREFIXED_NCIRCUMFLEX = 8
 	PREFIXED_NEXPRESSION = 9
 
+	UNKNOWN = 10
+
 class Legislation:
 	def __init__(self, fhandler, shandler):
 		self.logger = logging.getLogger("Legislation")
@@ -34,7 +36,25 @@ class Legislation:
 			return True
 		else:
 			return False
-	
+
+	def get_vote_type(self, message):
+		# TODO: Completely implement all the ProposalType checks.
+		if message == ":D":
+			# It's just a basic proposal if the vote is only :D
+			return ProposalType.BASIC
+		elif message.startswith(":D~"):
+			# It is either an :D~N or :D~mathexpr vote.
+			# TODO: Implement.
+			return ProposalType.UNKNOWN
+		elif message.startswith(":D^"):
+			# It is an :D^, :D^^, :D^^^ style vote.
+			# TODO: Implement.
+			return ProposalType.NCIRCUMFLEX
+		elif message == ":D~kick":
+			# The message refers to the last kick.
+			return ProposalType.KICK
+		else:
+			return ProposalType.UNKNOWN
 	def find_last_proposal_index(self, backlog):
 		pass
 
