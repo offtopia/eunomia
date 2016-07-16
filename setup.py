@@ -1,11 +1,11 @@
 from setuptools import setup
 
-setup(name="stenotype",
+setup(name="eunomia",
 	version="0.1.0",
-	packages=["stenotype"],
+	packages=["eunomia"],
 	entry_points={
 		"console_scripts": [
-			"stenotype = stenotype.__main__:main"
+			"eunomia = eunomia.__main__:main"
 		]
 	},
 )
