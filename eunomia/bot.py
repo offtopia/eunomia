@@ -63,7 +63,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		
 		votecount = 0
 		for i in range(len(self.backlog) - 1, proposal_index, -1):
-			if self.legislator.is_vote(self.backlog[i]):
+			if self.legislator.is_basic_vote(self.backlog[i]):
 				votecount += 1
 
 		self.logger.info("Vote count is now {}".format(votecount))

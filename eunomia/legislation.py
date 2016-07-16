@@ -11,9 +11,9 @@ class Legislation:
 		self.logger.info("Init complete.")
 	
 	def is_filibuster(self, message):
-		return not self.is_vote(message)
+		return not self.is_basic_vote(message)
 
-	def is_vote(self, message):
+	def is_basic_vote(self, message):
 		# TODO: Proper vote detection/evaluation.
 		if message == ":D":
 			return True
