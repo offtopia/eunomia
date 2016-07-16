@@ -69,7 +69,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 				votecount = 0
 
 		self.logger.info("Vote count is now {}".format(votecount))
-		if votecount >= 3:
+		if votecount == 3:
 			self.logger.info("Proposal \"{}\" accepted with {} votes.".format(self.backlog[proposal_index], votecount))
 
 	def on_dccmsg(self, c, event):
