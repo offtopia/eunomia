@@ -39,7 +39,11 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 			self.die("The life of the dead is placed in the memory of the living.")
 
 		elif command == "ping":
-			c.privmsg(self.channel, "{}: pong".format(sender_nick))
+			self.reply(sender_nick, "pong")
 
 		else:
-			c.notice(sender_nick, "Unknown command: " + command)
+			self.reply(sender_nick, "Unknown command.")	
+
+	def reply(self, sender_nick, reply):
+		c = self.connection
+		c.privmsg(self.channel, "{}: {}".format(sender_nick, reply))
