@@ -1,6 +1,7 @@
 import irc.bot
 import irc.strings
 import logging
+import legislation
 
 class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667):
@@ -24,6 +25,11 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		self.reloading = False
 		
 		self.logger.info("Init complete.")
+
+		self.legislator = legislation.Legislation(fh, sh)
+
+		self.max_backlog_length = 50
+		self.backlog = []
 	
 	def on_nicknameinuse(self, c, event):
 		c.nick(c.get_nickname() + "_")
@@ -38,10 +44,16 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		self.logger.info("Got a PRIVMSG: \"{}\"").format(event.arguments[0])
 
 	def on_pubmsg(self, c, event):
+		message = event.arguments[0]
+		if len(self.backlog) > self.max_backlog_length:
+			self.backlog.pop(0) # Remove the first item from the backlog.
+			self.logger.debug("Backlog too long. Popping first line.")
+		self.backlog.append(message)
+
 		a = event.arguments[0].split(":", 1)
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
-	
+
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
 
@@ -70,3 +82,4 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def reply(self, sender_nick, reply):
 		c = self.connection
 		c.privmsg(self.channel, "{}: {}".format(sender_nick, reply))
+
