@@ -1,4 +1,17 @@
 import logging
+from enum import Enum
+
+class ProposalType(Enum):
+	BASIC = 1
+	NBACK = 2
+	NCIRCUMFLEX = 3
+	NEXPRESSION = 4
+	KICK = 5
+
+	PREFIXED_BASIC = 6
+	PREFIXED_NBACK = 7
+	PREFIXED_NCIRCUMFLEX = 8
+	PREFIXED_NEXPRESSION = 9
 
 class Legislation:
 	def __init__(self, fhandler, shandler):
@@ -9,10 +22,12 @@ class Legislation:
 		self.logger.addHandler(shandler)
 
 		self.logger.info("Init complete.")
-	
-	def is_filibuster(self, message):
-		return not self.is_basic_vote(message)
 
+	def is_proposal(self, message):
+		# TODO: Implement checking for bot replies, nolog
+		if not self.is_basic_vote(message):
+			return True
+	
 	def is_basic_vote(self, message):
 		# TODO: Proper vote detection/evaluation.
 		if message == ":D":
@@ -35,8 +50,11 @@ class Legislation:
 			brange = [0]
 		for i in brange:
 			message = backlog[i]
-			if self.is_filibuster(message):
-				self.logger.debug("\"{}\" is filibuster at index {}".format(message, i))
+			if self.is_proposal(message):
+				self.logger.debug("\"{}\" is proposal at index {}".format(message, i))
 				return i
 		
 		return -1
+
+	def legislate_basic_vote_proposal(self, message):
+		
