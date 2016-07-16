@@ -47,12 +47,28 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		message = event.arguments[0]
 		if len(self.backlog) > self.max_backlog_length:
 			self.backlog.pop(0) # Remove the first item from the backlog.
-			self.logger.debug("Backlog too long. Popping first line.")
+			self.logger.debug("Backlog too long. Popped first line.")
 		self.backlog.append(message)
+		self.logger.debug("Appended new backlog message \"{}\"".format(message))
 
 		a = event.arguments[0].split(":", 1)
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
+
+		proposal_index = self.legislator.find_last_proposal_index(self.backlog)
+
+		if proposal_index == -1: # Couldn't find a proposal error.
+			self.logger.warning("Could not find a proposal in {} lines of backlog. This is likely a bug.".format(len(self.backlog)))
+			return
+		
+		votecount = 0
+		for i in range(len(self.backlog) - 1, proposal_index, -1):
+			if self.legislator.is_vote(self.backlog[i]):
+				votecount += 1
+
+		self.logger.info("Vote count is now {}".format(votecount))
+		if votecount >= 3:
+			self.logger.info("Proposal \"{}\" accepted with {} votes.".format(self.backlog[proposal_index], votecount))
 
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
