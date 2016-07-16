@@ -55,22 +55,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
 
-		proposal_index = self.legislator.find_last_proposal_index(self.backlog)
-
-		if proposal_index == -1: # Couldn't find a proposal error.
-			self.logger.warning("Could not find a proposal in {} lines of backlog. This is likely a bug.".format(len(self.backlog)))
-			return
-		
-		votecount = 0
-		for i in range(len(self.backlog) - 1, proposal_index, -1):
-			if self.legislator.is_basic_vote(self.backlog[i]):
-				votecount += 1
-			else:
-				votecount = 0
-
-		self.logger.info("Vote count is now {}".format(votecount))
-		if votecount == 3:
-			self.logger.info("Proposal \"{}\" accepted with {} votes.".format(self.backlog[proposal_index], votecount))
+		self.legislator.legislate_basic_vote_proposal(self.backlog)
 
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
