@@ -55,7 +55,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
 
-		self.legislator.legislate_basic_vote_proposal(self.backlog)
+		self.legislator.dereference_if_vote(message, self.backlog, self.backlog)
 
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
