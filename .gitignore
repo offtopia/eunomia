@@ -2,3 +2,4 @@ eunomia/__pycache__
 env/
 *.swp
 eunomia.log
+pending_proposals.txt
