@@ -45,6 +45,8 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def on_pubmsg(self, c, event):
 		message = event.arguments[0]
+		message = "<{}> {}".format(event.source.split("!")[0], message)
+	
 		if len(self.backlog) > self.max_backlog_length:
 			self.backlog.pop(0) # Remove the first item from the backlog.
 			self.logger.debug("Backlog too long. Popped first line.")
@@ -62,6 +64,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def on_dccchat(self, c, event):
 		self.logger.error("on_dccchat called but not implemented!")
+	
+	def on_action(self, c, event):
+		self.logger.error("on_action called but not implemented!")
 	
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
