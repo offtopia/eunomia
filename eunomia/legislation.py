@@ -5,20 +5,6 @@ from re import compile as regex
 
 vote_matcher = regex(r'<[^>]+> (?:(?P<nick>\S+)[:,] )?:D(?:(?P<carots>\^+)|~(?P<ints>\d+)|~(?P<expr>.+))?$')
 
-class ProposalType(Enum):
-	BASIC = 1
-	NBACK = 2
-	NCIRCUMFLEX = 3
-	NEXPRESSION = 4
-	KICK = 5
-
-	PREFIXED_BASIC = 6
-	PREFIXED_NBACK = 7
-	PREFIXED_NCIRCUMFLEX = 8
-	PREFIXED_NEXPRESSION = 9
-
-	UNKNOWN = 10
-
 class Legislation:
 	def __init__(self, fhandler, shandler):
 		self.logger = logging.getLogger("Legislation")
