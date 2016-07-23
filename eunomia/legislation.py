@@ -3,7 +3,7 @@ from enum import Enum
 
 from re import compile as regex
 
-vote_matcher = regex(r'(?:(?P<nick>\S+)[:,] )?:D(?:(?P<carots>\^+)|~(?P<ints>\d+)|~(?P<expr>.+))?$')
+vote_matcher = regex(r'<[^>]+> (?:(?P<nick>\S+)[:,] )?:D(?:(?P<carots>\^+)|~(?P<ints>\d+)|~(?P<expr>.+))?$')
 
 class ProposalType(Enum):
 	BASIC = 1
@@ -45,21 +45,25 @@ class Legislation:
 		return (match['nick'], 0)
 
 	def dereference_if_vote(self, message, backlog, backlog_orig, votecount=0):
+		self.logger.debug("Message \"{}\" dereferencing...".format(message))
 		packed = self.get_packed_vote_index(message)
 		if packed == None:
 			# It's a proposal.
+			self.logger.debug("It's a proposal.")
 			if votecount == 3:
 				self.legislate(message, backlog_orig[-25:])
 			return message
 
 		(nick, back_x) = packed
 		if nick == None and back_x == 0:
+			self.logger.debug("It's a basic :D. Dereferencing by recursion.")
 			return self.dereference_if_vote(backlog[len(backlog) - 2], backlog[:-1], backlog_orig, votecount + 1)
 
 		else:
+			self.logger.debug("It's a nick: :D or :D~expr. Dereferencing by recursion.")
 			if votecount == 3:
 				self.legislate(message, backlog_orig[-25:])
-			return self.dereference_if_vote(backlog[len(backlog) - back_x - 1], backlog, backlog_orig, votecount + 1)
+			return self.dereference_if_vote(backlog[len(backlog) - back_x - 1], backlog[:-1], backlog_orig, votecount + 1)
 	
 	def legislate(self, message, context):
 		self.logger.info("Legislation for proposal \"{}\" succeeded.".format(message))
