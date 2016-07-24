@@ -22,3 +22,7 @@ Run the bot:
 `python eunomia`  
 Remember that the bot only logs to stdout/stderr. I would recommend logging the bot's output to a file, as well as stdout:  
 `python eunomia 2>&1 | tee eunomia_log.txt`
+
+## Documentation
+Documentation is automatically generated from docstrings with Sphinx.  
+To view documentation, point a browser at `file://clone_location/docs/_build/html/index.html`
