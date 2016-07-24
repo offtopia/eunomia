@@ -46,17 +46,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def on_pubmsg(self, c, event):
 		message = event.arguments[0]
 		message = "<{}> {}".format(event.source.split("!")[0], message)
-	
-		if len(self.backlog) > self.max_backlog_length:
-			self.backlog.pop(0) # Remove the first item from the backlog.
-			# This also means that the active proposal has to be shifted by - 1
-			self.legislator.active_proposal -= 1
-			if self.legislator.active_proposal <= -1:
-				self.legislator.active_proposal = None
-			self.logger.debug("Backlog too long. Popped first line.")
-		self.backlog.append(message)
-		self.logger.debug("Appended new backlog message \"{}\"".format(message))
 
+		self.add_to_backlog(message)
+	
 		a = event.arguments[0].split(":", 1)
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
@@ -70,7 +62,10 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		self.logger.error("on_dccchat called but not implemented!")
 	
 	def on_action(self, c, event):
-		self.logger.error("on_action called but not implemented!")
+		message = event.arguments[0]
+		message = "* {} {}".format(event.source.split("!")[0], message)
+
+		self.add_to_backlog(message)
 	
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
@@ -94,4 +89,18 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def reply(self, sender_nick, reply):
 		c = self.connection
 		c.privmsg(self.channel, "{}: {}".format(sender_nick, reply))
+	
+	def add_to_backlog(self, message):
+		if len(self.backlog) > self.max_backlog_length:
+			self.backlog.pop(0) # Remove the first item from the backlog.
+			self.logger.debug("Backlog too long. Popped first line.")
+			
+			# This also means that the active proposal has to be shifted by - 1
+			self.legislator.active_proposal -= 1
 
+			if self.legislator.active_proposal <= -1:
+				self.legislator.active_proposal = None
+				self.logger.debug("Active proposal <= -1. Active proposal is now out of backlog range. Setting to None.")
+	
+		self.backlog.append(message)
+		self.logger.debug("Appended new backlog message \"{}\"".format(message))
