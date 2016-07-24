@@ -62,7 +62,10 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		self.logger.error("on_dccchat called but not implemented!")
 	
 	def on_action(self, c, event):
-		self.logger.error("on_action called but not implemented!")
+		message = event.arguments[0]
+		message = "* {} {}".format(event.source.split("!")[0], message)
+
+		self.add_to_backlog(message)
 	
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
