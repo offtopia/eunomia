@@ -40,7 +40,7 @@ class Legislation:
 			# It's a proposal
 			self.active_proposal = len(backlog) - 1
 			if votecount == 3:
-				self.legislate(backlog[self.active_proposal], backlog[-25:])
+				self.legislate(backlog[self.active_proposal], backlog_orig[-25:])
 			return
 
 		(nick, back_x) = packed
@@ -68,7 +68,7 @@ class Legislation:
 						self.active_proposal = i - 1
 					nick_msgs += 1
 			if votecount == 3:
-				self.legislate(backlog[self.active_proposal], backlog[-25:])
+				self.legislate(backlog[self.active_proposal], backlog_orig[-25:])
 
 		if self.active_proposal != None:
 			self.active_proposal += 1
