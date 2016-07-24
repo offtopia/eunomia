@@ -15,6 +15,8 @@ class Legislation:
 
 		self.logger.info("Init complete.")
 
+		self.active_proposal = None
+
 	def get_packed_vote_index(self, message):
 		match = vote_matcher.match(message)
 		if match is None:
@@ -50,7 +52,10 @@ class Legislation:
 				self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig, votecount + 1)
 			else:
 				self.logger.debug(":D~expr/:D~N")
-				self.dereference_if_vote(backlog[-back_x - 2], backlog, backlog_orig, votecount + 1)
+				try:
+					self.dereference_if_vote(backlog[-back_x - 2], backlog, backlog_orig, votecount + 1)
+				except IndexError as e:
+					self.logger.exception(":D~expr dereferencing failed! It is likely that the expr is out-of-bounds in the backlog.")
 		else:
 			self.logger.debug("nick: :D")
 
