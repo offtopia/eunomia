@@ -49,6 +49,10 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 	
 		if len(self.backlog) > self.max_backlog_length:
 			self.backlog.pop(0) # Remove the first item from the backlog.
+			# This also means that the active proposal has to be shifted by - 1
+			self.legislator.active_proposal -= 1
+			if self.legislator.active_proposal <= -1:
+				self.legislator.active_proposal = None
 			self.logger.debug("Backlog too long. Popped first line.")
 		self.backlog.append(message)
 		self.logger.debug("Appended new backlog message \"{}\"".format(message))
