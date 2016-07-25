@@ -105,7 +105,7 @@ class Legislation:
 			for i in range(len(backlog) - 1, -1, -1):
 				if backlog[i].startswith("<{}>".format(nick)):
 					if nick_msgs == back_x:
-						self.active_proposal = i - 1
+						self.active_proposal = i
 					nick_msgs += 1
 			if votecount == 3:
 				self.legislate(backlog[self.active_proposal], backlog_orig[-25:])
