@@ -105,7 +105,7 @@ class Legislation:
 
 			nick_msgs = 0
 			for i in range(len(backlog) - 1, -1, -1):
-				if backlog[i].startswith("<{}>".format(nick)):
+				if backlog[i][0].startswith("<{}>".format(nick)):
 					if nick_msgs == back_x:
 						self.active_proposal = i
 					nick_msgs += 1
