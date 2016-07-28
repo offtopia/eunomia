@@ -67,6 +67,12 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def on_join(self, c, event):
+		nick = event.source.split("!")[0]
+		message = "*** Joins: {}".format(nick)
+
+		self.add_to_backlog(message)
+
 	def on_part(self, c, event):
 		nick = event.source.split("!")[0]
 		part_message = event.arguments[0]
