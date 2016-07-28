@@ -15,7 +15,7 @@ from re import compile as regex
 vote_matcher = regex(r'<[^>]+> (?:(?P<nick>\S+)[:,] )?:D(?:(?P<carots>\^+)|~(?P<ints>\d+)|~(?P<expr>.+))?$')
 
 class Legislation:
-	""" Class that contains all legislation related functions. 
+	""" Class that contains all legislation related functions.
 
 		:param fhandler: Logging handler for output to a file.
 		:type fhandler: logging.FileHandler
@@ -44,7 +44,7 @@ class Legislation:
 		match = vote_matcher.match(message)
 		if match is None:
 			return None
-			
+
 		match = match.groupdict()
 		if match['ints'] is not None:
 			return (match['nick'], int(match['ints']))
@@ -56,7 +56,7 @@ class Legislation:
 		return (match['nick'], 0)
 
 	def dereference_if_vote(self, message, backlog, backlog_orig, votecount=0):
-		""" 
+		"""
 			Parses message and determines if it is a vote or proposal.
 			If it is a vote, determines type of vote, and dereferences the proposal the vote refers to.
 			If it is not a vote, saves the index of the proposal in the backlog.
@@ -100,7 +100,7 @@ class Legislation:
 			self.logger.debug("nick: :D")
 
 			votecount += 1
-			
+
 			nick_msgs = 0
 			for i in range(len(backlog) - 1, -1, -1):
 				if backlog[i].startswith("<{}>".format(nick)):
