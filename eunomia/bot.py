@@ -48,7 +48,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		message = event.arguments[0]
 		message = "<{}> {}".format(event.source.split("!")[0], message)
 
-		self.add_to_backlog(message)
+		self.add_to_backlog(message, datetime.datetime.now().time())
 
 		a = event.arguments[0].split(":", 1)
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
@@ -124,5 +124,8 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 				self.legislator.active_proposal = None
 				self.logger.debug("Active proposal <= -1. Active proposal is now out of backlog range. Setting to None.")
 
-		self.backlog.append((message, timestamp))
+		# datetime.now().time() also gives milliseconds. Ignore milliseconds.
+		timestamp_trunc = datetime.time(timestamp.hour, timestamp.minute, timestamp.second)
+
+		self.backlog.append((message, timestamp_trunc))
 		self.logger.debug("Appended new backlog message \"{}\"".format(message))
