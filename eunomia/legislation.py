@@ -106,9 +106,18 @@ class Legislation:
 			nick_msgs = 0
 			for i in range(len(backlog) - 1, -1, -1):
 				if backlog[i][0].startswith("<{}>".format(nick)):
+					# Messages are only counted if they're not a vote.
+					# self.get_packed_vote_index returns None if the message is not a vote.
+					# If it does not return None, just pass over the message.
+					if self.get_packed_vote_index(backlog[i][0]) != None:
+							pass
+
+					# If we made it here, the message is not a vote and should be counted.
+
 					if nick_msgs == back_x:
 						self.active_proposal = i
 					nick_msgs += 1
+
 			if votecount == 3:
 				self.legislate(backlog[self.active_proposal], backlog_orig[-25:])
 
