@@ -80,6 +80,13 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def on_quit(self, c, event):
+		nick = event.source.split("!")[0]
+		quit_message = event.arguments[0]
+		message = "*** Quits: {} ({})".format(nick, quit_message)
+
+		self.add_to_backlog(message)
+
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
 		c = self.connection
