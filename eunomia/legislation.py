@@ -63,19 +63,21 @@ class Legislation:
 
 			If 3 votes are counted, legislates the pending proposal, see :func:`eunomia.legislation.Legislation.legislate`
 
-			:param message: The message to parse.
+			:param message: A tuple containing both the message in string format and the timestamp.
 			:param backlog: A potentially modified backlog (this is used during recursion; when the backlog is sliced to avoid recounting votes.)
 			:param backlog_orig: An original copy of the backlog, used mostly for context inthe event of a successful legislation.
 			:param votecount: Number of votes already counted during recursion.
-			:type message: str
+			:type message: tuple
 			:type backlog: list
 			:type backlog_orig: list
 			:type votecount: int
 		"""
 
-		self.logger.debug("Message \"{}\" dereferencing...".format(message))
+		(raw_message, timestamp) = message
 
-		packed = self.get_packed_vote_index(message)
+		self.logger.debug("Message \"{}\" dereferencing...".format(raw_message))
+
+		packed = self.get_packed_vote_index(raw_message)
 		if packed == None:
 			# It's a proposal
 			self.active_proposal = len(backlog) - 1
@@ -125,10 +127,13 @@ class Legislation:
 		"""
 
 		self.logger.info("Legislation for proposal \"{}\" succeeded.".format(message))
+
+		(raw_message, timestamp) = message
 		f = open("pending_proposals.txt", "a")
-		f.write("[{}]\n".format(message))
+		f.write("[{}]\n".format(raw_message))
 		for line in context:
-			f.write("{}\n".format(line))
+			(raw_line, timestamp) = line
+			f.write("{} {}\n".format(str(timestamp), raw_line))
 		f.write("\n") # Write one last newline.
 		f.close()
 

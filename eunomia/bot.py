@@ -2,6 +2,7 @@ import irc.bot
 import irc.strings
 import logging
 import legislation
+import datetime
 
 class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667):
@@ -53,7 +54,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
 
-		self.legislator.dereference_if_vote(message, self.backlog, self.backlog)
+		self.legislator.dereference_if_vote((message,datetime.time()), self.backlog, self.backlog)
 
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
@@ -110,7 +111,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		c = self.connection
 		c.privmsg(self.channel, "{}: {}".format(sender_nick, reply))
 
-	def add_to_backlog(self, message):
+	def add_to_backlog(self, message, timestamp=datetime.time()):
 		if len(self.backlog) > self.max_backlog_length:
 			self.backlog.pop(0) # Remove the first item from the backlog.
 			self.logger.debug("Backlog too long. Popped first line.")
@@ -123,5 +124,5 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 				self.legislator.active_proposal = None
 				self.logger.debug("Active proposal <= -1. Active proposal is now out of backlog range. Setting to None.")
 
-		self.backlog.append(message)
+		self.backlog.append((message, timestamp))
 		self.logger.debug("Appended new backlog message \"{}\"".format(message))
