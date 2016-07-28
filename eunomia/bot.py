@@ -111,7 +111,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		c = self.connection
 		c.privmsg(self.channel, "{}: {}".format(sender_nick, reply))
 
-	def add_to_backlog(self, message, timestamp=datetime.time()):
+	def add_to_backlog(self, message, timestamp=datetime.datetime.now().time()):
 		if len(self.backlog) > self.max_backlog_length:
 			self.backlog.pop(0) # Remove the first item from the backlog.
 			self.logger.debug("Backlog too long. Popped first line.")
