@@ -67,6 +67,13 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def on_part(self, c, event):
+		nick = event.source.split("!")[0]
+		part_message = event.arguments[0]
+		message = "*** Quits: {} ({})".format(nick, part_message)
+
+		self.add_to_backlog(message)
+
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
 		c = self.connection
