@@ -16,12 +16,15 @@ Install requirements:
 `pip install -r requirements.txt`
 
 ## Running
-Currently bot settings are hardcoded. You can change them by editing eunomia/\_\_main\_\_.py  
+**Note:** All config options are in `eunomia.ini`. Please read the in-file comments for a description of what each section/option does.  
+
 Make sure you have activated the Python environment (`source env/bin/activate`).  
 Run the bot:  
 `python eunomia`  
-Remember that the bot only logs to stdout/stderr. I would recommend logging the bot's output to a file, as well as stdout:  
-`python eunomia 2>&1 | tee eunomia_log.txt`
+
+All internal bot output is also appended to eunomia.log.  
+Channel logs can be found in `logs/channel/[channel name]/date.log`.  
+Proposal logs are located in `logs/proposal/[channel name]/date_time.log`
 
 ## Documentation
 Documentation is automatically generated from docstrings with Sphinx.  
