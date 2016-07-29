@@ -51,3 +51,21 @@ class ChannelLogger(RolloverLogger):
 		self.channel_name = channel_name
 
 		super().__init__("channel", channel_name)
+
+class ProposalLogger(RolloverLogger):
+	def __init__(self, channel_name):
+		self.channel_name = channel_name
+
+		super().__init__("proposal", channel_name)
+
+	def get_current_time(self):
+		datetime_now = datetime.datetime.utcnow()
+		print("Getting current time.")
+		print("datetime object: " + str(datetime_now))
+
+		return datetime.time(datetime_now.hour, datetime_now.minute, datetime_now.second)
+
+	def update_log_filename(self):
+		super().update_log_filename()
+		self.log_filename = "{}/{}_{}.log".format(self.log_dir, self.date_now, self.get_current_time())
+		print("Log filename now \"{}\"".format(self.log_filename))
