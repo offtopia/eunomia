@@ -47,6 +47,19 @@ class Legislation:
 
 		return False if result == None else True
 
+	def is_ignored_message(self, message):
+		""" Parses the message, determines if it should be ignored (does not reset votecount, is not a proposal)
+
+			:param message: Message to parse.
+			:type message: strings
+			:returns: True if the message should be ignored when legislating.
+		"""
+
+		jpq_matcher = regex(r'\*\*\* (Joins|Parts|Quits)')
+		result = jpq_matcher.match(message)
+
+		return False if result == None else True
+
 	def get_packed_vote_index(self, message):
 		""" Parses the message, determines if it's a vote or not, and returns various information about the type of vote and its attributes.
 
