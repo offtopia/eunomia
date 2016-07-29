@@ -25,7 +25,7 @@ class Legislation:
 
 	def __init__(self, fhandler, shandler):
 		self.logger = logging.getLogger("Legislation")
-		self.logger.setLevel(logging.DEBUG)
+		self.logger.setLevel(logging.INFO)
 
 		self.logger.addHandler(fhandler)
 		self.logger.addHandler(shandler)
