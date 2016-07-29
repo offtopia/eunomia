@@ -1,9 +1,26 @@
 import bot
+import configparser
+import sys
 
 def main(args=None):
-	server = "irc.freenode.net"
-	channel = "##ingsoc"
-	nick = "eunomia"
+	config_name = "eunomia.ini"
+
+	config = configparser.ConfigParser()
+	config.read(config_name)
+
+	if config.sections() == []:
+		# If the config sections are empty, then an error has occurred in reading the config.
+		# Either it is empty or the file does not exist.
+
+		# This exception should never be caught, so we don't need to sys.exit()
+		raise Exception("Config file \"{}\" not found or empty! Aborting.".format(config_name))
+
+	irc_config = config["irc"]
+
+	server = irc_config.get("server", "irc.freenode.net")
+	channel = irc_config.get("channel", "#eunomia_default")
+	nick = irc_config.get("nick", "eunomia")
+	port = irc_config.getint("port", 6667)
 
 	bot_inst = bot.EunomiaBot(channel, nick, server)
 	bot_inst.start()
