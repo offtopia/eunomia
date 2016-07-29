@@ -1,12 +1,19 @@
 import datetime
 import os
 
-class ChannelLogger:
-	def __init__(self, channel_name):
-		self.channel_name = channel_name
+class RolloverLogger:
+	def __init__(self, log_type_name, log_subdirs=None):
+		self.log_dir = os.path.dirname(os.path.dirname(__file__)) + "/logs/{}".format(log_type_name)
 
-		self.init_date = self.get_current_date()
-		self.date_now = self.init_date
+		if log_subdirs != None:
+			# If there are extra subdirs, append them.
+			print("Formatting with log subdirs: " + str(log_subdirs))
+			self.log_dir = "{}/{}".format(self.log_dir, log_subdirs)
+
+		print("Log dir is now " + str(self.log_dir))
+
+		# Also initialize the current date.
+		self.date_now = self.get_current_date()
 
 	def get_current_date(self):
 		datetime_now = datetime.datetime.utcnow()
@@ -15,6 +22,7 @@ class ChannelLogger:
 	def update_current_date(self):
 		# TODO: This could probably just be 'self.date_now = self.get_current_date()'.
 		date_new = self.get_current_date()
+
 		if date_new == self.date_now:
 			# There's no need to change the date - we're already up to date.
 			return
@@ -22,9 +30,8 @@ class ChannelLogger:
 		self.date_now = date_new
 
 	def update_log_filename(self):
-		# Make sure we're writing to the correct log file.
+		# Make sure the date is correct.
 		self.update_current_date()
-		self.log_dir = os.path.dirname(os.path.dirname(__file__)) + "/logs/channel/{}".format(self.channel_name)
 
 		# Create the log dir (recursively) if it does not exist.
 		if not os.path.exists(self.log_dir):
@@ -40,3 +47,9 @@ class ChannelLogger:
 		# This is basically a stub to append to the file right now.
 		with open(self.log_filename, 'a') as logfile:
 			logfile.write(log_message)
+
+class ChannelLogger(RolloverLogger):
+	def __init__(self, channel_name):
+		self.channel_name = channel_name
+
+		super().__init__("channel", channel_name)
