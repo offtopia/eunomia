@@ -8,6 +8,8 @@
 """
 
 import logging
+import eunomialog
+
 from enum import Enum
 
 from re import compile as regex
@@ -23,7 +25,7 @@ class Legislation:
 		:type shandler: logging.StreamHandler
 	"""
 
-	def __init__(self, fhandler, shandler):
+	def __init__(self, fhandler, shandler, channel):
 		self.logger = logging.getLogger("Legislation")
 		self.logger.setLevel(logging.INFO)
 
@@ -33,6 +35,8 @@ class Legislation:
 		self.logger.info("Init complete.")
 
 		self.active_proposal = None
+
+		self.proposal_logger = eunomialog.ProposalLogger(channel)
 
 	def is_non_proposal_filibuster(self, message):
 		""" Parses the message, determines if it is a filibustering non-proposal (D: or :D:)
@@ -173,14 +177,11 @@ class Legislation:
 
 		self.logger.info("Legislation for proposal \"{}\" succeeded.".format(message))
 
-		(raw_message, timestamp) = message
-		f = open("pending_proposals.txt", "a")
-		f.write("[{}]\n".format(raw_message))
-		for line in context:
-			(raw_line, timestamp) = line
-			f.write("{} {}\n".format(str(timestamp), raw_line))
-		f.write("\n") # Write one last newline.
-		f.close()
+		# NOTE: RolloverLogger (which ProposalLogger inherits) writes lists item-by-item, with a newline after each.
+		# So we don't need to append newlines here.
+		output = []
+		output.append("[{}]".format(raw_message))
+		for (raw_line, timestamp) in context:
+			output.append("{} {}".format(timestamp, raw_line))
 
-		self.active_proposal = None
-		self.active_votes = 0
+		self.proposal_logger.append(output)
