@@ -57,7 +57,7 @@
 <span class="n">vote_matcher</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="s1">r&#39;&lt;[^&gt;]+&gt; (?:(?P&lt;nick&gt;\S+)[:,] )?:D(?:(?P&lt;carots&gt;\^+)|~(?P&lt;ints&gt;\d+)|~(?P&lt;expr&gt;.+))?$&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Legislation"><a class="viewcode-back" href="../../legislation.html#eunomia.legislation.Legislation">[docs]</a><span class="k">class</span> <span class="nc">Legislation</span><span class="p">:</span>
-	<span class="sd">&quot;&quot;&quot; Class that contains all legislation related functions. </span>
+	<span class="sd">&quot;&quot;&quot; Class that contains all legislation related functions.</span>
 
 <span class="sd">		:param fhandler: Logging handler for output to a file.</span>
 <span class="sd">		:type fhandler: logging.FileHandler</span>
@@ -76,6 +76,32 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span> <span class="o">=</span> <span class="kc">None</span>
 
+<div class="viewcode-block" id="Legislation.is_non_proposal_filibuster"><a class="viewcode-back" href="../../legislation.html#eunomia.legislation.Legislation.is_non_proposal_filibuster">[docs]</a>	<span class="k">def</span> <span class="nf">is_non_proposal_filibuster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Parses the message, determines if it is a filibustering non-proposal (D: or :D:)</span>
+
+<span class="sd">			:param message: Message to parse.</span>
+<span class="sd">			:type message: str</span>
+<span class="sd">			:returns: True if the message is &#39;D:&#39;, &#39;:D:&#39;, or &#39;nick: D:&#39;, etc.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">npf_matcher</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="s1">r&#39;&lt;[^&gt;]+&gt; (?:(\S+)[:,] )?(:)?D:&#39;</span><span class="p">)</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">npf_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Legislation.is_ignored_message"><a class="viewcode-back" href="../../legislation.html#eunomia.legislation.Legislation.is_ignored_message">[docs]</a>	<span class="k">def</span> <span class="nf">is_ignored_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Parses the message, determines if it should be ignored (does not reset votecount, is not a proposal)</span>
+
+<span class="sd">			:param message: Message to parse.</span>
+<span class="sd">			:type message: strings</span>
+<span class="sd">			:returns: True if the message should be ignored when legislating.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">jpq_matcher</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="s1">r&#39;\*\*\* (Joins|Parts|Quits)&#39;</span><span class="p">)</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">jpq_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span></div>
+
 <div class="viewcode-block" id="Legislation.get_packed_vote_index"><a class="viewcode-back" href="../../legislation.html#eunomia.legislation.Legislation.get_packed_vote_index">[docs]</a>	<span class="k">def</span> <span class="nf">get_packed_vote_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Parses the message, determines if it&#39;s a vote or not, and returns various information about the type of vote and its attributes.</span>
 
@@ -86,7 +112,7 @@
 		<span class="n">match</span> <span class="o">=</span> <span class="n">vote_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="k">return</span> <span class="kc">None</span>
-			
+
 		<span class="n">match</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
 		<span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="s1">&#39;ints&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="k">return</span> <span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="s1">&#39;nick&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="s1">&#39;ints&#39;</span><span class="p">]))</span>
@@ -98,31 +124,43 @@
 		<span class="k">return</span> <span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="s1">&#39;nick&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Legislation.dereference_if_vote"><a class="viewcode-back" href="../../legislation.html#eunomia.legislation.Legislation.dereference_if_vote">[docs]</a>	<span class="k">def</span> <span class="nf">dereference_if_vote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">backlog</span><span class="p">,</span> <span class="n">backlog_orig</span><span class="p">,</span> <span class="n">votecount</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; </span>
+		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Parses message and determines if it is a vote or proposal.</span>
 <span class="sd">			If it is a vote, determines type of vote, and dereferences the proposal the vote refers to.</span>
 <span class="sd">			If it is not a vote, saves the index of the proposal in the backlog.</span>
 
 <span class="sd">			If 3 votes are counted, legislates the pending proposal, see :func:`eunomia.legislation.Legislation.legislate`</span>
 
-<span class="sd">			:param message: The message to parse.</span>
+<span class="sd">			:param message: A tuple containing both the message in string format and the timestamp.</span>
 <span class="sd">			:param backlog: A potentially modified backlog (this is used during recursion; when the backlog is sliced to avoid recounting votes.)</span>
 <span class="sd">			:param backlog_orig: An original copy of the backlog, used mostly for context inthe event of a successful legislation.</span>
 <span class="sd">			:param votecount: Number of votes already counted during recursion.</span>
-<span class="sd">			:type message: str</span>
+<span class="sd">			:type message: tuple</span>
 <span class="sd">			:type backlog: list</span>
 <span class="sd">			:type backlog_orig: list</span>
 <span class="sd">			:type votecount: int</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Message </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> dereferencing...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+		<span class="p">(</span><span class="n">raw_message</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span> <span class="o">=</span> <span class="n">message</span>
 
-		<span class="n">packed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_packed_vote_index</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Message </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> dereferencing...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw_message</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_non_proposal_filibuster</span><span class="p">(</span><span class="n">raw_message</span><span class="p">):</span>
+			<span class="c1"># Because non proposal filibusters are not true proposals they cannot be dereferenced.</span>
+			<span class="n">votecount</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="k">return</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ignored_message</span><span class="p">(</span><span class="n">raw_message</span><span class="p">):</span>
+			<span class="c1"># Just ignore and recurse further.</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">dereference_if_vote</span><span class="p">(</span><span class="n">backlog</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">backlog</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">backlog_orig</span><span class="p">,</span> <span class="n">votecount</span><span class="p">)</span>
+			<span class="k">return</span>
+
+		<span class="n">packed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_packed_vote_index</span><span class="p">(</span><span class="n">raw_message</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">packed</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="c1"># It&#39;s a proposal</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">backlog</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 			<span class="k">if</span> <span class="n">votecount</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">legislate</span><span class="p">(</span><span class="n">backlog</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span><span class="p">],</span> <span class="n">backlog</span><span class="p">[</span><span class="o">-</span><span class="mi">25</span><span class="p">:])</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">legislate</span><span class="p">(</span><span class="n">backlog</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span><span class="p">],</span> <span class="n">backlog_orig</span><span class="p">[</span><span class="o">-</span><span class="mi">25</span><span class="p">:])</span>
 			<span class="k">return</span>
 
 		<span class="p">(</span><span class="n">nick</span><span class="p">,</span> <span class="n">back_x</span><span class="p">)</span> <span class="o">=</span> <span class="n">packed</span>
@@ -142,15 +180,24 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;nick: :D&quot;</span><span class="p">)</span>
 
 			<span class="n">votecount</span> <span class="o">+=</span> <span class="mi">1</span>
-			
+
 			<span class="n">nick_msgs</span> <span class="o">=</span> <span class="mi">0</span>
 			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">backlog</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-				<span class="k">if</span> <span class="n">backlog</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nick</span><span class="p">)):</span>
+				<span class="k">if</span> <span class="n">backlog</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nick</span><span class="p">)):</span>
+					<span class="c1"># Messages are only counted if they&#39;re not a vote.</span>
+					<span class="c1"># self.get_packed_vote_index returns None if the message is not a vote.</span>
+					<span class="c1"># If it does not return None, just pass over the message.</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_packed_vote_index</span><span class="p">(</span><span class="n">backlog</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+							<span class="k">pass</span>
+
+					<span class="c1"># If we made it here, the message is not a vote and should be counted.</span>
+
 					<span class="k">if</span> <span class="n">nick_msgs</span> <span class="o">==</span> <span class="n">back_x</span><span class="p">:</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span> <span class="o">=</span> <span class="n">i</span>
 					<span class="n">nick_msgs</span> <span class="o">+=</span> <span class="mi">1</span>
+
 			<span class="k">if</span> <span class="n">votecount</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">legislate</span><span class="p">(</span><span class="n">backlog</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span><span class="p">],</span> <span class="n">backlog</span><span class="p">[</span><span class="o">-</span><span class="mi">25</span><span class="p">:])</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">legislate</span><span class="p">(</span><span class="n">backlog</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span><span class="p">],</span> <span class="n">backlog_orig</span><span class="p">[</span><span class="o">-</span><span class="mi">25</span><span class="p">:])</span>
 
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">active_proposal</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -167,10 +214,13 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Legislation for proposal </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> succeeded.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+
+		<span class="p">(</span><span class="n">raw_message</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span> <span class="o">=</span> <span class="n">message</span>
 		<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;pending_proposals.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
-		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw_message</span><span class="p">))</span>
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">context</span><span class="p">:</span>
-			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+			<span class="p">(</span><span class="n">raw_line</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span> <span class="o">=</span> <span class="n">line</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">timestamp</span><span class="p">),</span> <span class="n">raw_line</span><span class="p">))</span>
 		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Write one last newline.</span>
 		<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
