@@ -119,10 +119,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 			# This also means that the active proposal has to be shifted by - 1
 			if self.legislator.active_proposal != None:
 			    self.legislator.active_proposal -= 1
-
-			if self.legislator.active_proposal <= -1:
-				self.legislator.active_proposal = None
-				self.logger.debug("Active proposal <= -1. Active proposal is now out of backlog range. Setting to None.")
+				if self.legislator.active_proposal <= -1:
+					self.legislator.active_proposal = None
+					self.logger.debug("Active proposal <= -1. Active proposal is now out of backlog range. Setting to None.")
 
 		# datetime.now().time() also gives milliseconds. Ignore milliseconds.
 		timestamp_trunc = datetime.time(timestamp.hour, timestamp.minute, timestamp.second)
