@@ -34,6 +34,19 @@ class Legislation:
 
 		self.active_proposal = None
 
+	def is_non_proposal_filibuster(self, message):
+		""" Parses the message, determines if it is a filibustering non-proposal (D: or :D:)
+
+			:param message: Message to parse.
+			:type message: str
+			:returns: True if the message is 'D:', ':D:', or 'nick: D:', etc.
+		"""
+
+		npf_matcher = regex(r'<[^>]+> (?:(\S+)[:,] )?(:)?D:')
+		result = npf_matcher.match(message)
+
+		return False if result == None else True
+
 	def get_packed_vote_index(self, message):
 		""" Parses the message, determines if it's a vote or not, and returns various information about the type of vote and its attributes.
 
@@ -76,6 +89,11 @@ class Legislation:
 		(raw_message, timestamp) = message
 
 		self.logger.debug("Message \"{}\" dereferencing...".format(raw_message))
+
+		if self.is_non_proposal_filibuster(raw_message):
+			# Because non proposal filibusters are not true proposals they cannot be dereferenced.
+			votecount = 0
+			return
 
 		packed = self.get_packed_vote_index(raw_message)
 		if packed == None:
