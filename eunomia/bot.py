@@ -28,7 +28,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.logger.info("Init complete.")
 
-		self.legislator = legislation.Legislation(fh, sh)
+		self.legislator = legislation.Legislation(fh, sh, channel)
 
 		self.max_backlog_length = 50
 		self.backlog = []
