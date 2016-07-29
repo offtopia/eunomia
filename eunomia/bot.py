@@ -3,6 +3,7 @@ import irc.strings
 import logging
 import legislation
 import datetime
+import eunomialog
 
 class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667):
@@ -31,6 +32,8 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.max_backlog_length = 50
 		self.backlog = []
+
+		self.channel_logger = eunomialog.ChannelLogger(channel)
 
 	def on_nicknameinuse(self, c, event):
 		c.nick(c.get_nickname() + "_")
@@ -136,3 +139,6 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.backlog.append((message, timestamp_trunc))
 		self.logger.debug("Appended new backlog message \"{}\"".format(message))
+
+		# Add to the channel logs, too.
+		self.channel_logger.append("{} {}".format(timestamp_trunc, message))
