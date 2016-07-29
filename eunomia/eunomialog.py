@@ -44,7 +44,13 @@ class RolloverLogger:
 		# This is basically a stub to append to the file right now.
 		# However, it is assumed that the log entry does not include trailing newline.
 		with open(self.log_filename, 'a') as logfile:
-			logfile.write(log_message + "\n")
+			# Write all items, one by one, with newlines after each, if it's a list.
+			if isinstance(log_message, list):
+				for line in log_message:
+					logfile.write(line + "\n")
+			# Or if it's a string, just write the message with a trailing newline.
+			elif isinstance(log_message, str):
+				logfile.write(log_message + "\n")
 
 class ChannelLogger(RolloverLogger):
 	def __init__(self, channel_name):
