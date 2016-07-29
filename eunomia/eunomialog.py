@@ -7,10 +7,7 @@ class RolloverLogger:
 
 		if log_subdirs != None:
 			# If there are extra subdirs, append them.
-			print("Formatting with log subdirs: " + str(log_subdirs))
 			self.log_dir = "{}/{}".format(self.log_dir, log_subdirs)
-
-		print("Log dir is now " + str(self.log_dir))
 
 		# Also initialize the current date.
 		self.date_now = self.get_current_date()
