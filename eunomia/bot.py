@@ -88,6 +88,14 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def on_kick(self, c, event):
+		kicker_nick = event.source.split("!")[0]
+		kickee_nick = event.arguments[0]
+		kick_message = event.arguments[1]
+		message = "*** Kick: {} by {} ({})".format(kickee_nick, kicker_nick, kick_message)
+
+		self.add_to_backlog(message)
+
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
 		c = self.connection
