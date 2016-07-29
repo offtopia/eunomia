@@ -99,6 +99,15 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def on_mode(self, c, event):
+		changer_nick = event.source.split("!")[0]
+		changee_nick = event.arguments[1]
+		mode_change = event.arguments[0]
+
+		message = "*** Mode: {} {} by {}".format(mode_change, changee_nick, changer_nick)
+
+		self.add_to_backlog(message)
+
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
 		c = self.connection
