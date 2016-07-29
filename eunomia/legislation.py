@@ -108,6 +108,11 @@ class Legislation:
 			votecount = 0
 			return
 
+		if self.is_ignored_message(raw_message):
+			# Just ignore and recurse further.
+			self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig, votecount)
+			return
+
 		packed = self.get_packed_vote_index(raw_message)
 		if packed == None:
 			# It's a proposal
