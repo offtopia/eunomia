@@ -45,8 +45,9 @@ class RolloverLogger:
 
 		# We assume log_message is already preformatted.
 		# This is basically a stub to append to the file right now.
+		# However, it is assumed that the log entry does not include trailing newline.
 		with open(self.log_filename, 'a') as logfile:
-			logfile.write(log_message)
+			logfile.write(log_message + "\n")
 
 class ChannelLogger(RolloverLogger):
 	def __init__(self, channel_name):
