@@ -3,7 +3,7 @@ import os
 
 class RolloverLogger:
 	def __init__(self, log_type_name, log_subdirs=None):
-		self.log_dir = os.path.dirname(os.path.dirname(__file__)) + "/logs/{}".format(log_type_name)
+		self.log_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/logs/{}".format(log_type_name)
 
 		if log_subdirs != None:
 			# If there are extra subdirs, append them.
