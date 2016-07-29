@@ -114,6 +114,13 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def on_pubnotice(self, c, event):
+		sender_nick = event.source.split("!")[0]
+		notice_message = event.arguments[0]
+		message = "*** Notice: {} \"{}\" by {}".format(event.target, notice_message, sender_nick)
+
+		self.add_to_backlog(message)
+
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
 		c = self.connection
