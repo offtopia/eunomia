@@ -91,12 +91,9 @@ class ProposalLogger(RolloverLogger):
 
 	def get_current_time(self):
 		datetime_now = datetime.datetime.utcnow()
-		print("Getting current time.")
-		print("datetime object: " + str(datetime_now))
 
 		return datetime.time(datetime_now.hour, datetime_now.minute, datetime_now.second)
 
 	def update_log_filename(self):
 		super().update_log_filename()
 		self.log_filename = "{}/{}_{}.log".format(self.log_dir, self.date_now, self.get_current_time())
-		print("Log filename now \"{}\"".format(self.log_filename))
