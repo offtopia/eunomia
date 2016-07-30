@@ -51,7 +51,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		message = event.arguments[0]
 		message = "<{}> {}".format(event.source.split("!")[0], message)
 
-		self.add_to_backlog(message, datetime.datetime.now().time())
+		self.add_to_backlog(message, datetime.datetime.utcnow().time())
 
 		a = event.arguments[0].split(":", 1)
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
