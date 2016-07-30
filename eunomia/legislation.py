@@ -160,7 +160,7 @@ class Legislation:
 					nick_msgs += 1
 
 			if votecount == 3:
-				self.legislate(backlog[self.active_proposal], backlog_orig[-25:])
+				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
 
 		if self.active_proposal != None:
 			self.active_proposal += 1
