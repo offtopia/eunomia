@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>eunomia.eunomialog &mdash; eunomia 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="eunomia 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for eunomia.eunomialog</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="RolloverLogger"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.RolloverLogger">[docs]</a><span class="k">class</span> <span class="nc">RolloverLogger</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;	Provides a basic class for logging that creates new logfiles based on date.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_type_name</span><span class="p">,</span> <span class="n">log_subdirs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;/logs/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">log_type_name</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">log_subdirs</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="c1"># If there are extra subdirs, append them.</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">log_subdirs</span><span class="p">)</span>
+
+		<span class="c1"># Also initialize the current date.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">date_now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_date</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RolloverLogger.get_current_date"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.RolloverLogger.get_current_date">[docs]</a>	<span class="k">def</span> <span class="nf">get_current_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Gets the current UTC date.</span>
+
+<span class="sd">			:returns: A :class:`datetime.date` object containing the current date.</span>
+<span class="sd">			:rtype: datetime.date</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">datetime_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">datetime_now</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">datetime_now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">datetime_now</span><span class="o">.</span><span class="n">day</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RolloverLogger.update_current_date"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.RolloverLogger.update_current_date">[docs]</a>	<span class="k">def</span> <span class="nf">update_current_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Updates the current UTC date.</span>
+<span class="sd">			Ignores if the date is current.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># TODO: This could probably just be &#39;self.date_now = self.get_current_date()&#39;.</span>
+		<span class="n">date_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_date</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">date_new</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_now</span><span class="p">:</span>
+			<span class="c1"># There&#39;s no need to change the date - we&#39;re already up to date.</span>
+			<span class="k">return</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">date_now</span> <span class="o">=</span> <span class="n">date_new</span></div>
+
+<div class="viewcode-block" id="RolloverLogger.update_log_filename"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.RolloverLogger.update_log_filename">[docs]</a>	<span class="k">def</span> <span class="nf">update_log_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Updates the current log filename, making sure to use the correct file for the date.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Make sure the date is correct.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">update_current_date</span><span class="p">()</span>
+
+		<span class="c1"># Create the log dir (recursively) if it does not exist.</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">):</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">log_filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">.log&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_now</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RolloverLogger.append"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.RolloverLogger.append">[docs]</a>	<span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_message</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Appends a new line/list of lines to the log.</span>
+
+<span class="sd">			If ``log_message`` is a ``str``, a newline is appended before it is written to the log.</span>
+
+<span class="sd">			If ``log_message`` is a ``list``, a newline is appended to each item, then they are written to the log.</span>
+
+<span class="sd">			:param log_message: Either a ``str`` to append to the log, or a ``list`` of strs to append.</span>
+<span class="sd">			:type log_message: str/list</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Make sure that we&#39;re writing to the right logfile.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">update_log_filename</span><span class="p">()</span>
+
+		<span class="c1"># We assume log_message is already preformatted.</span>
+		<span class="c1"># This is basically a stub to append to the file right now.</span>
+		<span class="c1"># However, it is assumed that the log entry does not include trailing newline.</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">logfile</span><span class="p">:</span>
+			<span class="c1"># Write all items, one by one, with newlines after each, if it&#39;s a list.</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_message</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">log_message</span><span class="p">:</span>
+					<span class="n">logfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="c1"># Or if it&#39;s a string, just write the message with a trailing newline.</span>
+			<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_message</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+				<span class="n">logfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">log_message</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="ChannelLogger"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.ChannelLogger">[docs]</a><span class="k">class</span> <span class="nc">ChannelLogger</span><span class="p">(</span><span class="n">RolloverLogger</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Handles logging of channel messages to disk.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">channel_name</span> <span class="o">=</span> <span class="n">channel_name</span>
+
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProposalLogger"><a class="viewcode-back" href="../../eunomialog.html#eunomia.eunomialog.ProposalLogger">[docs]</a><span class="k">class</span> <span class="nc">ProposalLogger</span><span class="p">(</span><span class="n">RolloverLogger</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Handles logging of proposals to disk.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">channel_name</span> <span class="o">=</span> <span class="n">channel_name</span>
+
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s2">&quot;proposal&quot;</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">get_current_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">datetime_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Getting current time.&quot;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;datetime object: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime_now</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="n">datetime_now</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">datetime_now</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">datetime_now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">update_log_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update_log_filename</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log_filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">.log&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_now</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_time</span><span class="p">())</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Log filename now </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_filename</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Nicholas De Nova.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

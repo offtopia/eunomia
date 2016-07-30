@@ -2,6 +2,8 @@ import datetime
 import os
 
 class RolloverLogger:
+	"""	Provides a basic class for logging that creates new logfiles based on date.
+	"""
 	def __init__(self, log_type_name, log_subdirs=None):
 		self.log_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/logs/{}".format(log_type_name)
 
@@ -13,10 +15,18 @@ class RolloverLogger:
 		self.date_now = self.get_current_date()
 
 	def get_current_date(self):
+		""" Gets the current UTC date.
+
+			:returns: A :class:`datetime.date` object containing the current date.
+			:rtype: datetime.date
+		"""
 		datetime_now = datetime.datetime.utcnow()
 		return datetime.date(datetime_now.year, datetime_now.month, datetime_now.day)
 
 	def update_current_date(self):
+		""" Updates the current UTC date.
+			Ignores if the date is current.
+		"""
 		# TODO: This could probably just be 'self.date_now = self.get_current_date()'.
 		date_new = self.get_current_date()
 
@@ -27,6 +37,8 @@ class RolloverLogger:
 		self.date_now = date_new
 
 	def update_log_filename(self):
+		""" Updates the current log filename, making sure to use the correct file for the date.
+		"""
 		# Make sure the date is correct.
 		self.update_current_date()
 
@@ -37,6 +49,15 @@ class RolloverLogger:
 		self.log_filename = "{}/{}.log".format(self.log_dir, self.date_now)
 
 	def append(self, log_message):
+		""" Appends a new line/list of lines to the log.
+
+			If ``log_message`` is a ``str``, a newline is appended before it is written to the log.
+
+			If ``log_message`` is a ``list``, a newline is appended to each item, then they are written to the log.
+
+			:param log_message: Either a ``str`` to append to the log, or a ``list`` of strs to append.
+			:type log_message: str/list
+		"""
 		# Make sure that we're writing to the right logfile.
 		self.update_log_filename()
 
@@ -53,12 +74,16 @@ class RolloverLogger:
 				logfile.write(log_message + "\n")
 
 class ChannelLogger(RolloverLogger):
+	""" Handles logging of channel messages to disk.
+	"""
 	def __init__(self, channel_name):
 		self.channel_name = channel_name
 
 		super().__init__("channel", channel_name)
 
 class ProposalLogger(RolloverLogger):
+	""" Handles logging of proposals to disk.
+	"""
 	def __init__(self, channel_name):
 		self.channel_name = channel_name
 

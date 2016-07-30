@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>IRC Logging &mdash; eunomia 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="eunomia 0.1.0 documentation" href="index.html" />
+    <link rel="prev" title="Legislation" href="legislation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-eunomia.eunomialog">
+<span id="irc-logging"></span><h1>IRC Logging<a class="headerlink" href="#module-eunomia.eunomialog" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="eunomia.eunomialog.ChannelLogger">
+<em class="property">class </em><code class="descclassname">eunomia.eunomialog.</code><code class="descname">ChannelLogger</code><span class="sig-paren">(</span><em>channel_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#ChannelLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.ChannelLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#eunomia.eunomialog.RolloverLogger" title="eunomia.eunomialog.RolloverLogger"><code class="xref py py-class docutils literal"><span class="pre">eunomia.eunomialog.RolloverLogger</span></code></a></p>
+<p>Handles logging of channel messages to disk.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="eunomia.eunomialog.ProposalLogger">
+<em class="property">class </em><code class="descclassname">eunomia.eunomialog.</code><code class="descname">ProposalLogger</code><span class="sig-paren">(</span><em>channel_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#ProposalLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.ProposalLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#eunomia.eunomialog.RolloverLogger" title="eunomia.eunomialog.RolloverLogger"><code class="xref py py-class docutils literal"><span class="pre">eunomia.eunomialog.RolloverLogger</span></code></a></p>
+<p>Handles logging of proposals to disk.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="eunomia.eunomialog.RolloverLogger">
+<em class="property">class </em><code class="descclassname">eunomia.eunomialog.</code><code class="descname">RolloverLogger</code><span class="sig-paren">(</span><em>log_type_name</em>, <em>log_subdirs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#RolloverLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.RolloverLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Provides a basic class for logging that creates new logfiles based on date.</p>
+<dl class="method">
+<dt id="eunomia.eunomialog.RolloverLogger.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>log_message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#RolloverLogger.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.RolloverLogger.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends a new line/list of lines to the log.</p>
+<p>If <code class="docutils literal"><span class="pre">log_message</span></code> is a <code class="docutils literal"><span class="pre">str</span></code>, a newline is appended before it is written to the log.</p>
+<p>If <code class="docutils literal"><span class="pre">log_message</span></code> is a <code class="docutils literal"><span class="pre">list</span></code>, a newline is appended to each item, then they are written to the log.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>log_message</strong> (<em>str/list</em>) &#8211; Either a <code class="docutils literal"><span class="pre">str</span></code> to append to the log, or a <code class="docutils literal"><span class="pre">list</span></code> of strs to append.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="eunomia.eunomialog.RolloverLogger.get_current_date">
+<code class="descname">get_current_date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#RolloverLogger.get_current_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.RolloverLogger.get_current_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current UTC date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <code class="xref py py-class docutils literal"><span class="pre">datetime.date</span></code> object containing the current date.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">datetime.date</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="eunomia.eunomialog.RolloverLogger.update_current_date">
+<code class="descname">update_current_date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#RolloverLogger.update_current_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.RolloverLogger.update_current_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the current UTC date.
+Ignores if the date is current.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="eunomia.eunomialog.RolloverLogger.update_log_filename">
+<code class="descname">update_log_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/eunomia/eunomialog.html#RolloverLogger.update_log_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eunomia.eunomialog.RolloverLogger.update_log_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the current log filename, making sure to use the correct file for the date.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="legislation.html" title="previous chapter">Legislation</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/eunomialog.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Nicholas De Nova.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/eunomialog.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
