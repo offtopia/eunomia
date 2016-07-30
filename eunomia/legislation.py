@@ -179,6 +179,8 @@ class Legislation:
 
 		# NOTE: RolloverLogger (which ProposalLogger inherits) writes lists item-by-item, with a newline after each.
 		# So we don't need to append newlines here.
+		raw_message = message[0]
+
 		output = []
 		output.append("[{}]".format(raw_message))
 		for (raw_line, timestamp) in context:
