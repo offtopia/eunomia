@@ -178,7 +178,7 @@ class Legislation:
 			:type context: list
 		"""
 
-		self.logger.info("Legislation for proposal \"{}\" succeeded.".format(message))
+		self.logger.info("Legislation for proposal \"{}\" succeeded.".format(message.message))
 
 		# NOTE: RolloverLogger (which ProposalLogger inherits) writes lists item-by-item, with a newline after each.
 		# So we don't need to append newlines here.
