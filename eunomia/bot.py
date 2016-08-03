@@ -4,6 +4,7 @@ import logging
 import legislation
 import datetime
 import eunomialog
+from backlog import BacklogItem
 
 class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667):
@@ -121,6 +122,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(message)
 
+	def message_to_backlog_item(self, message, timestamp):
+		return BacklogItem(message, timestamp)
+
 	def do_command(self, event, command):
 		sender_nick = event.source.nick
 		c = self.connection
@@ -148,6 +152,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		if timestamp == None:
 			timestamp = datetime.datetime.now().time()
 
+		if isinstance(message, str):
+			message = self.message_to_backlog_item(message, timestamp)
+
 		if len(self.backlog) > self.max_backlog_length:
 			self.backlog.pop(0) # Remove the first item from the backlog.
 			self.logger.debug("Backlog too long. Popped first line.")
@@ -159,11 +166,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 					self.legislator.active_proposal = None
 					self.logger.debug("Active proposal <= -1. Active proposal is now out of backlog range. Setting to None.")
 
-		# datetime.now().time() also gives milliseconds. Ignore milliseconds.
-		timestamp_trunc = datetime.time(timestamp.hour, timestamp.minute, timestamp.second)
-
-		self.backlog.append((message, timestamp_trunc))
-		self.logger.debug("Appended new backlog message \"{}\"".format(message))
+		# Note that we do not need to truncate the timestamp - BacklogItem's constructor does so automatically.
+		self.backlog.append(message)
+		self.logger.debug("Appended new backlog message \"{}\"".format(message.message))
 
 		# Add to the channel logs, too.
-		self.channel_logger.append("{} {}".format(timestamp_trunc, message))
+		self.channel_logger.append("{} {}".format(message.timestamp, message.message))
