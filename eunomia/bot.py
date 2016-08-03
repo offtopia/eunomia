@@ -52,13 +52,17 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		message = event.arguments[0]
 		message = "<{}> {}".format(event.source.split("!")[0], message)
 
-		self.add_to_backlog(message, datetime.datetime.utcnow().time())
+		timestamp = datetime.datetime.utcnow().time()
+
+		mbi = self.message_to_backlog_item(message, timestamp)
+
+		self.add_to_backlog(mbi, timestamp)
 
 		a = event.arguments[0].split(":", 1)
 		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
 			self.do_command(event, a[1].strip())
 
-		self.legislator.dereference_if_vote((message,datetime.time()), self.backlog, self.backlog)
+		self.legislator.dereference_if_vote(mbi, self.backlog, self.backlog)
 
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
