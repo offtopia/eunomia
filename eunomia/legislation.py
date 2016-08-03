@@ -10,6 +10,8 @@
 import logging
 import eunomialog
 
+from backlog import BacklogItem
+
 from enum import Enum
 
 from re import compile as regex
@@ -103,7 +105,7 @@ class Legislation:
 			:type votecount: int
 		"""
 
-		(raw_message, timestamp) = message
+		raw_message = message.message
 
 		self.logger.debug("Message \"{}\" dereferencing...".format(raw_message))
 
@@ -180,11 +182,13 @@ class Legislation:
 
 		# NOTE: RolloverLogger (which ProposalLogger inherits) writes lists item-by-item, with a newline after each.
 		# So we don't need to append newlines here.
-		raw_message = message[0]
+
+		# Because BacklogItems are used now, just unpack the 'message' field.
+		raw_message = message.message
 
 		output = []
 		output.append("[{}]".format(raw_message))
-		for (raw_line, timestamp) in context:
-			output.append("{} {}".format(timestamp, raw_line))
+		for line in context:
+			output.append("{} {}".format(line.timestamp, line.message))
 
 		self.proposal_logger.append(output)
