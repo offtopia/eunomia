@@ -126,6 +126,8 @@ class Legislation:
 			self.active_proposal = len(backlog) - 1
 			if self.votecount == 3:
 				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
+			else:
+				self.votecount = 0
 
 			return
 
