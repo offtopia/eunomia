@@ -37,6 +37,7 @@ class Legislation:
 		self.logger.info("Init complete.")
 
 		self.active_proposal = None
+		self.votecount = 0
 
 		self.proposal_logger = eunomialog.ProposalLogger(channel)
 
@@ -111,19 +112,19 @@ class Legislation:
 
 		if self.is_non_proposal_filibuster(raw_message):
 			# Because non proposal filibusters are not true proposals they cannot be dereferenced.
-			votecount = 0
+			self.votecount = 0
 			return
 
 		if self.is_ignored_message(raw_message):
 			# Just ignore and recurse further.
-			self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig, votecount)
+			self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig, self.votecount)
 			return
 
 		packed = self.get_packed_vote_index(raw_message)
 		if packed == None:
 			# It's a proposal
 			self.active_proposal = len(backlog) - 1
-			if votecount == 3:
+			if self.votecount == 3:
 				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
 
 			return
@@ -134,17 +135,19 @@ class Legislation:
 			if back_x == 0:
 				# It's a basic :D
 				self.logger.debug("Basic :D.")
-				self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig, votecount + 1)
+				self.votecount += 1
+				self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig)
 			else:
 				self.logger.debug(":D~expr/:D~N")
 				try:
-					self.dereference_if_vote(backlog[-back_x - 2], backlog, backlog_orig, votecount + 1)
+					self.votecount += 1
+					self.dereference_if_vote(backlog[-back_x - 2], backlog, backlog_orig)
 				except IndexError as e:
 					self.logger.exception(":D~expr dereferencing failed! It is likely that the expr is out-of-bounds in the backlog.")
 		else:
 			self.logger.debug("nick: :D")
 
-			votecount += 1
+			self.votecount += 1
 
 			nick_msgs = 0
 			for i in range(len(backlog) - 1, -1, -1):
@@ -161,7 +164,7 @@ class Legislation:
 						self.active_proposal = i
 					nick_msgs += 1
 
-			if votecount == 3:
+			if self.votecount == 3:
 				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
 
 		if self.active_proposal != None:
