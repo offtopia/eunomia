@@ -126,8 +126,8 @@ class Legislation:
 			self.active_proposal = len(backlog) - 1
 			if self.votecount == 3:
 				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
-			else:
-				self.votecount = 0
+
+			self.votecount = 0
 
 			return
 
@@ -149,8 +149,6 @@ class Legislation:
 		else:
 			self.logger.debug("nick: :D")
 
-			self.votecount += 1
-
 			nick_msgs = 0
 			for i in range(len(backlog) - 1, -1, -1):
 				if backlog[i].message.startswith("<{}>".format(nick)) or backlog[i].message.startswith("* {}".format(nick)):
@@ -167,9 +165,12 @@ class Legislation:
 					nick_msgs += 1
 
 			if self.votecount == 3:
+				print("self.active_proposal=" + str(self.active_proposal))
 				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
 			else:
 				self.votecount = 0
+
+			self.votecount += 1
 
 		if self.active_proposal != None:
 			self.active_proposal += 1
@@ -199,3 +200,5 @@ class Legislation:
 			output.append("{} {}".format(line.timestamp, line.message))
 
 		self.proposal_logger.append(output)
+
+		self.active_proposal = None
