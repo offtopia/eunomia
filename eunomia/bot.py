@@ -51,11 +51,13 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		if self.ident_method != None:
 			if self.ident_method == "nickserv":
+				self.logger.info("Identifying to NickServ.")
 				c.privmsg("NickServ", "identify {} {}".format(self.ident_username, self.ident_pass))
 			else:
 				self.logger.error("Identification method \"{}\" not supported.".format(self.ident_method))
+			self.logger.info("Identification finished.")
 		else:
-			self.logger.warn("Not identifying.")
+			self.logger.info("Not identifying.")
 
 	def on_privmsg(self, c, event):
 		self.do_command(event, event.arguments[0])
