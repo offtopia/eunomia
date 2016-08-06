@@ -33,6 +33,7 @@ def main(args=None):
 		ident_packed = None
 
 	bot_inst = bot.EunomiaBot(channel, nick, server, ident_packed, port)
+	bot_inst.connection.buffer_class.errors = "replace"
 	bot_inst.start()
 
 if __name__ == "__main__":
