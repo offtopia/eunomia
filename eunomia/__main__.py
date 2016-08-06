@@ -16,13 +16,23 @@ def main(args=None):
 		raise Exception("Config file \"{}\" not found or empty! Aborting.".format(config_name))
 
 	irc_config = config["irc"]
+	ident_config = config["ident"]
 
 	server = irc_config.get("server", "irc.freenode.net")
 	channel = irc_config.get("channel", "#eunomia_default")
 	nick = irc_config.get("nick", "eunomia")
 	port = irc_config.getint("port", 6667)
 
-	bot_inst = bot.EunomiaBot(channel, nick, server)
+	ident_username = ident_config.get("username")
+	ident_pass = ident_config.get("password")
+	ident_method = ident_config.get("method")
+
+	ident_packed = (ident_username, ident_pass, ident_method)
+
+	if ident_method == None:
+		ident_packed = None
+
+	bot_inst = bot.EunomiaBot(channel, nick, server, ident_packed)
 	bot_inst.start()
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ import eunomialog
 from backlog import BacklogItem
 
 class EunomiaBot(irc.bot.SingleServerIRCBot):
-	def __init__(self, channel, nickname, server, port=6667):
+	def __init__(self, channel, nickname, server, ident_packed=None, port=6667):
 		self.logger = logging.getLogger("EunomiaBot")
 		self.logger.setLevel(logging.INFO)
 
@@ -36,6 +36,11 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.channel_logger = eunomialog.ChannelLogger(channel)
 
+		if ident_packed != None:
+			(self.ident_username, self.ident_pass, self.ident_method) = ident_packed
+		else:
+			self.ident_username = self.ident_pass = self.ident_method = None
+
 	def on_nicknameinuse(self, c, event):
 		c.nick(c.get_nickname() + "_")
 		self.logger.info("Nickname {} was in use. Trying {}.".format(c.get_nickname(), c.get_nickname() + "_"))
@@ -43,6 +48,14 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 	def on_welcome(self, c, event):
 		c.join(self.channel)
 		self.logger.info("Connection complete.")
+
+		if self.ident_method != None:
+			if self.ident_method == "nickserv":
+				c.privmsg("NickServ", "identify {} {}".format(self.ident_username, self.ident_pass))
+			else:
+				self.logger.error("Identification method \"{}\" not supported.".format(self.ident_method))
+		else:
+			self.logger.warn("Not identifying.")
 
 	def on_privmsg(self, c, event):
 		self.do_command(event, event.arguments[0])
