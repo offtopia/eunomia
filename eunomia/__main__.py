@@ -23,9 +23,9 @@ def main(args=None):
 	nick = irc_config.get("nick", "eunomia")
 	port = irc_config.getint("port", 6667)
 
-	ident_username = ident_config.get("username")
-	ident_pass = ident_config.get("password")
-	ident_method = ident_config.get("method")
+	ident_username = ident_config.get("username", nick)
+	ident_pass = ident_config.get("password", "eunomia_default")
+	ident_method = ident_config.get("method", "none")
 
 	ident_packed = (ident_username, ident_pass, ident_method)
 
