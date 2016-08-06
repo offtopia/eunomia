@@ -58,10 +58,6 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(mbi, timestamp)
 
-		a = event.arguments[0].split(":", 1)
-		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
-			self.do_command(event, a[1].strip())
-
 		self.legislator.dereference_if_vote(mbi, self.backlog, self.backlog)
 
 	def on_dccmsg(self, c, event):
@@ -128,25 +124,6 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def message_to_backlog_item(self, message, timestamp):
 		return BacklogItem(message, timestamp)
-
-	def do_command(self, event, command):
-		sender_nick = event.source.nick
-		c = self.connection
-
-		self.logger.info("Nick \"{}\" attempts to perform \"{}\" command.".format(sender_nick, command))
-
-		if command == "disconnect":
-			self.disconnect()
-
-		elif command == "die":
-			self.die("The life of the dead is placed in the memory of the living.")
-
-		elif command == "ping":
-			self.reply(sender_nick, "pong")
-
-		else:
-			self.reply(sender_nick, "Unknown command.")
-			self.logger.warning("Unknown command \"{}\"".format(command))
 
 	def reply(self, sender_nick, reply):
 		c = self.connection
