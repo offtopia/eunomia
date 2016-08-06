@@ -29,7 +29,7 @@ def main(args=None):
 
 	ident_packed = (ident_username, ident_pass, ident_method)
 
-	if ident_method == None:
+	if ident_method == "none":
 		ident_packed = None
 
 	bot_inst = bot.EunomiaBot(channel, nick, server, ident_packed)
