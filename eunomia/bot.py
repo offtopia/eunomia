@@ -146,7 +146,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def add_to_backlog(self, message, timestamp=None):
 		if timestamp == None:
-			timestamp = datetime.datetime.now().time()
+			timestamp = datetime.datetime.utcnow().time()
 
 		if isinstance(message, str):
 			message = self.message_to_backlog_item(message, timestamp)
