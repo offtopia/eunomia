@@ -11,7 +11,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		self.logger = logging.getLogger("EunomiaBot")
 		self.logger.setLevel(logging.INFO)
 
-		lformat = logging.Formatter("[%(asctime)s] [%(name)s] [%(levelname)-5.5s]: %(message)s", "%Y-%m-%d %H:%M:%S")
+		lformat = logging.Formatter("[%(asctime)s] [%(name)s.%(funcName)s] [%(levelname)-5.5s]: %(message)s", "%Y-%m-%d %H:%M:%S")
 
 		fh = logging.FileHandler("eunomia.log")
 		fh.setFormatter(lformat)
