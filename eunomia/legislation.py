@@ -37,10 +37,18 @@ class Legislation:
 		self.logger.info("Init complete.")
 
 		self.active_proposal = None
+		self._votecount = 0
 		self.votecount = 0
 
 		self.proposal_logger = eunomialog.ProposalLogger(channel)
 
+	@property
+	def votecount(self):
+		return self._votecount
+	@votecount.setter
+	def votecount(self, value):
+		self.logger.debug("Votecount previously {}, now {}".format(self.votecount, value))
+		self._votecount = value
 	def is_non_proposal_filibuster(self, message):
 		""" Parses the message, determines if it is a filibustering non-proposal (D: or :D:)
 
@@ -88,92 +96,33 @@ class Legislation:
 
 		return (match['nick'], 0)
 
-	def dereference_if_vote(self, message, backlog, backlog_orig, votecount=0):
-		"""
-			Parses message and determines if it is a vote or proposal.
-			If it is a vote, determines type of vote, and dereferences the proposal the vote refers to.
-			If it is not a vote, saves the index of the proposal in the backlog.
+	def dereference_if_vote(self, message, backlog):
+		# Step backwards, from newest to oldest messages, one at a time.
+		for i in range(len(backlog) - 1, -1, -1):
+			self.logger.debug("At backlog position " + str(i))
+			current_message = backlog[i].message
+			self.logger.debug("Current message=" + current_message)
 
-			If 3 votes are counted, legislates the pending proposal, see :func:`eunomia.legislation.Legislation.legislate`
+			packed = self.get_packed_vote_index(current_message)
+			self.logger.debug("packed=" + str(packed))
 
-			:param message: A tuple containing both the message in string format and the timestamp.
-			:param backlog: A potentially modified backlog (this is used during recursion; when the backlog is sliced to avoid recounting votes.)
-			:param backlog_orig: An original copy of the backlog, used mostly for context inthe event of a successful legislation.
-			:param votecount: Number of votes already counted during recursion.
-			:type message: tuple
-			:type backlog: list
-			:type backlog_orig: list
-			:type votecount: int
-		"""
-
-		raw_message = message.message
-
-		self.logger.debug("Message \"{}\" dereferencing...".format(raw_message))
-
-		if self.is_non_proposal_filibuster(raw_message):
-			# Because non proposal filibusters are not true proposals they cannot be dereferenced.
-			self.votecount = 0
-			return
-
-		if self.is_ignored_message(raw_message):
-			# Just ignore and recurse further.
-			self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig, self.votecount)
-			return
-
-		packed = self.get_packed_vote_index(raw_message)
-		if packed == None:
-			# It's a proposal
-			self.active_proposal = len(backlog) - 1
-			if self.votecount == 3:
-				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
-
-			self.votecount = 0
-
-			return
-
-		(nick, back_x) = packed
-
-		if nick == None:
-			if back_x == 0:
-				# It's a basic :D
-				self.logger.debug("Basic :D.")
-				self.votecount += 1
-				self.dereference_if_vote(backlog[-2], backlog[:-1], backlog_orig)
+			if packed == None:
+				self.logger.debug("packed==None")
+				return
 			else:
-				self.logger.debug(":D~expr/:D~N")
-				try:
-					self.votecount += 1
-					self.dereference_if_vote(backlog[-back_x - 2], backlog, backlog_orig)
-				except IndexError as e:
-					self.logger.exception(":D~expr dereferencing failed! It is likely that the expr is out-of-bounds in the backlog.")
-		else:
-			self.logger.debug("nick: :D")
-
-			nick_msgs = 0
-			for i in range(len(backlog) - 1, -1, -1):
-				if backlog[i].message.startswith("<{}>".format(nick)) or backlog[i].message.startswith("* {}".format(nick)):
-					# Messages are only counted if they're not a vote.
-					# self.get_packed_vote_index returns None if the message is not a vote.
-					# If it does not return None, just pass over the message.
-					if self.get_packed_vote_index(backlog[i].message) != None:
-						continue
-
-					# If we made it here, the message is not a vote and should be counted.
-
-					if nick_msgs == back_x:
-						self.active_proposal = i
-					nick_msgs += 1
-
+				(nick, back_x) = packed
+				if nick == None:
+					if back_x == 0:
+						self.logger.debug("Basic ':D'")
+					else:
+						self.logger.debug("':D~expr/:D~N'")
+						# TODO: Perform handling if there's an exception (out of bounds, most likely)
+				else:
+					self.logger.debug("'nick: :D'")
+			self.logger.debug("votecount=" + str(self.votecount))
 			if self.votecount == 3:
-				print("self.active_proposal=" + str(self.active_proposal))
-				self.legislate(backlog[self.active_proposal], backlog_orig[self.active_proposal - 25:])
-			else:
-				self.votecount = 0
-
-			self.votecount += 1
-
-		if self.active_proposal != None:
-			self.active_proposal += 1
+				# TODO: Legislate.
+				pass
 
 	def legislate(self, message, context):
 		""" Legislates a given message and context, writes these to file ``pending_proposals.txt``
@@ -202,3 +151,4 @@ class Legislation:
 		self.proposal_logger.append(output)
 
 		self.active_proposal = None
+		self.votecount = 0

@@ -73,7 +73,7 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.add_to_backlog(mbi, timestamp)
 
-		self.legislator.dereference_if_vote(mbi, self.backlog, self.backlog)
+		self.legislator.dereference_if_vote(mbi, self.backlog)
 
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
