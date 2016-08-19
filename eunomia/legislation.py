@@ -121,12 +121,13 @@ class Legislation:
 					else:
 						self.logger.debug("':D~expr/:D~N'")
 						self.votecount += 1
-						self.active_proposal = i - back_x
+						self.active_proposal = i - back_x - 1
 						if self.active_proposal < 0:
 							self.logger.error(":D~expr dereferencing failed. The expression evaluated to a value beyond the backlog range (val={}, len(backlog)={})".format(self.active_proposal, len(backlog)))
 							self.active_proposal = None
 				else:
 					self.logger.debug("'nick: :D'")
+
 			self.logger.debug("votecount=" + str(self.votecount))
 			self.logger.debug("active_proposal=" + str(self.active_proposal))
 			if self.votecount == 3:
