@@ -104,25 +104,39 @@ class Legislation:
 			self.logger.debug("Current message=" + current_message)
 
 			packed = self.get_packed_vote_index(current_message)
-			self.logger.debug("packed=" + str(packed))
 
 			if packed == None:
 				self.logger.debug("packed==None")
-				return
 			else:
 				(nick, back_x) = packed
 				if nick == None:
 					if back_x == 0:
 						self.logger.debug("Basic ':D'")
+						self.votecount += 1
+						# Active proposal is the message before this one.
+
+						# Note that this is flawed and does not work properly
+						# if there is a sequence of :Ds.
+						self.active_proposal = i - 1
 					else:
 						self.logger.debug("':D~expr/:D~N'")
-						# TODO: Perform handling if there's an exception (out of bounds, most likely)
+						self.votecount += 1
+						self.active_proposal = i - back_x
+						if self.active_proposal < 0:
+							self.logger.error(":D~expr dereferencing failed. The expression evaluated to a value beyond the backlog range (val={}, len(backlog)={})".format(self.active_proposal, len(backlog)))
+							self.active_proposal = None
 				else:
 					self.logger.debug("'nick: :D'")
 			self.logger.debug("votecount=" + str(self.votecount))
+			self.logger.debug("active_proposal=" + str(self.active_proposal))
 			if self.votecount == 3:
 				# TODO: Legislate.
+				self.logger.info("Fake legislation: message \"{}\", votecount={}, active_proposal={}".format(backlog[i].message, self.votecount, self.active_proposal))
+				self.votecount = 0
 				pass
+
+		# Cleanup
+		self.votecount = 0
 
 	def legislate(self, message, context):
 		""" Legislates a given message and context, writes these to file ``pending_proposals.txt``
