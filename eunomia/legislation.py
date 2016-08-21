@@ -133,7 +133,7 @@ class Legislation:
 					for i in range(len(backlog) - 1, -1, -1):
 						self.logger.debug("Indexing... ({})".format(str(i)))
 						message = backlog[i].message
-						if message.startswith("<{}>".format(nick)) or message.startswith("* {}".format(nick)):
+						if message.startswith("<{}>".format(nick)) or message.startswith("* {}".format(nick)) and (self.get_packed_vote_index(message) != None and back_x == 0):
 							self.logger.debug("Target \"{}\" found.".format(nick))
 							if nick_messages == back_x:
 								if i == self.active_proposal:
