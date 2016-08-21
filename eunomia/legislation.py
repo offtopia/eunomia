@@ -29,7 +29,7 @@ class Legislation:
 
 	def __init__(self, fhandler, shandler, channel):
 		self.logger = logging.getLogger("Legislation")
-		self.logger.setLevel(logging.INFO)
+		self.logger.setLevel(logging.DEBUG)
 
 		self.logger.addHandler(fhandler)
 		self.logger.addHandler(shandler)
@@ -107,6 +107,8 @@ class Legislation:
 
 			if packed == None:
 				self.logger.debug("packed==None")
+				self.votecount = 0
+				return
 			else:
 				(nick, back_x) = packed
 				if nick == None:
@@ -127,6 +129,24 @@ class Legislation:
 							self.active_proposal = None
 				else:
 					self.logger.debug("'nick: :D'")
+					nick_messages = 0
+					for i in range(len(backlog) - 1, -1, -1):
+						self.logger.debug("Indexing... ({})".format(str(i)))
+						message = backlog[i].message
+						if message.startswith("<{}>".format(nick)) or message.startswith("* {}".format(nick)):
+							self.logger.debug("Target \"{}\" found.".format(nick))
+							if nick_messages == back_x:
+								if i == self.active_proposal:
+									self.logger.debug("Incrementing proposal.")
+									self.votecount += 1
+								else:
+									self.logger.debug("Proposal dereferencing failed. Returning.")
+									return
+									self.logger.debug("Changing proposal. Setting votecount to 1.")
+									self.active_proposal = i
+									self.votecount = 1
+
+							nick_messages += 1
 
 			self.logger.debug("votecount=" + str(self.votecount))
 			self.logger.debug("active_proposal=" + str(self.active_proposal))
@@ -134,7 +154,7 @@ class Legislation:
 				# TODO: Legislate.
 				self.logger.info("Fake legislation: message \"{}\", votecount={}, active_proposal={}".format(backlog[i].message, self.votecount, self.active_proposal))
 				self.votecount = 0
-				pass
+				return
 
 		# Cleanup
 		self.votecount = 0
