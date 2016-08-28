@@ -29,7 +29,7 @@ class Legislation:
 
 	def __init__(self, fhandler, shandler, channel):
 		self.logger = logging.getLogger("Legislation")
-		self.logger.setLevel(logging.DEBUG)
+		self.logger.setLevel(logging.INFO)
 
 		self.logger.addHandler(fhandler)
 		self.logger.addHandler(shandler)
@@ -115,18 +115,15 @@ class Legislation:
 					if back_x == 0:
 						self.logger.debug("Basic ':D'")
 						self.votecount += 1
-						# Active proposal is the message before this one.
-
-						# Note that this is flawed and does not work properly
-						# if there is a sequence of :Ds.
-						self.active_proposal = i - 1
+						""" Active proposal is not set here.
+	                        If it were, it would break 'nick: :D' referencing (and probably other things.)
+                        	Also, it's pointless - either the referencing will be covered in
+                        	the amount of backlog to be stored, or the reference will be stored properly
+                        	by a 'more complex' reference (like 'nick: :D')
+                        """
 					else:
 						self.logger.debug("':D~expr/:D~N'")
 						self.votecount += 1
-						self.active_proposal = i - back_x - 1
-						if self.active_proposal < 0:
-							self.logger.error(":D~expr dereferencing failed. The expression evaluated to a value beyond the backlog range (val={}, len(backlog)={})".format(self.active_proposal, len(backlog)))
-							self.active_proposal = None
 				else:
 					self.logger.debug("'nick: :D'")
 					nick_messages = 0
@@ -140,8 +137,6 @@ class Legislation:
 									self.logger.debug("Incrementing proposal.")
 									self.votecount += 1
 								else:
-									self.logger.debug("Proposal dereferencing failed. Returning.")
-									return
 									self.logger.debug("Changing proposal. Setting votecount to 1.")
 									self.active_proposal = i
 									self.votecount = 1
