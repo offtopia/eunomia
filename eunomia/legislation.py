@@ -146,9 +146,10 @@ class Legislation:
 			self.logger.debug("votecount=" + str(self.votecount))
 			self.logger.debug("active_proposal=" + str(self.active_proposal))
 			if self.votecount == 3:
-				# TODO: Legislate.
-				self.logger.info("Fake legislation: message \"{}\", votecount={}, active_proposal={}".format(backlog[i].message, self.votecount, self.active_proposal))
-				self.votecount = 0
+				if self.active_proposal == None:
+					self.active_proposal = len(backlog) - 1
+				# self.legislate() sets self.votecount to 0, so we don't need to worry about it.
+				self.legislate(backlog[self.active_proposal], backlog[self.active_proposal - 25:])
 				return
 
 		# Cleanup
