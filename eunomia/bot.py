@@ -7,7 +7,7 @@ import eunomialog
 from backlog import BacklogItem
 
 class EunomiaBot(irc.bot.SingleServerIRCBot):
-	def __init__(self, channel, nickname, server, ident_packed=None, port=6667):
+	def __init__(self, channel, nickname, server, pretty_version, ident_packed=None, port=6667):
 		self.logger = logging.getLogger("EunomiaBot")
 		self.logger.setLevel(logging.INFO)
 
@@ -40,6 +40,8 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 			(self.ident_username, self.ident_pass, self.ident_method) = ident_packed
 		else:
 			self.ident_username = self.ident_pass = self.ident_method = None
+
+		self.pretty_version = pretty_version
 
 	def on_nicknameinuse(self, c, event):
 		c.nick(c.get_nickname() + "_")
@@ -144,6 +146,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		message = "*** Notice: {} \"{}\" by {}".format(event.target, notice_message, sender_nick)
 
 		self.add_to_backlog(message)
+
+	def get_version(self):
+		return self.pretty_version
 
 	def message_to_backlog_item(self, message, timestamp):
 		return BacklogItem(message, timestamp)

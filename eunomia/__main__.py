@@ -1,7 +1,13 @@
 import bot
 import configparser
 import sys
+import subprocess
 
+def get_pretty_version():
+	git_describe = subprocess.check_output(["git", "describe", "--always"]).decode("UTF-8").replace('\n', '')
+	current_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("UTF-8").replace('\n', '')
+	return "eunomia {}-{}".format(current_branch, git_describe)
+	
 def main(args=None):
 	config_name = "eunomia.ini"
 
@@ -32,7 +38,7 @@ def main(args=None):
 	if ident_method == "none":
 		ident_packed = None
 
-	bot_inst = bot.EunomiaBot(channel, nick, server, ident_packed, port)
+	bot_inst = bot.EunomiaBot(channel, nick, server, get_pretty_version(), ident_packed, port)
 	bot_inst.connection.buffer_class.errors = "replace"
 	bot_inst.start()
 
