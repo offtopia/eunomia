@@ -95,16 +95,24 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def on_part(self, c, event):
 		nick = event.source.split("!")[0]
-		part_message = event.arguments[0]
+		try:
+			part_message = event.arguments[0]
+		except IndexError:
+			# A debug message is probably not needed here.
+			# Parts without a message are not uncommon.
+			part_message = ""
 		message = "*** Parts: {} ({})".format(nick, part_message)
 
 		self.add_to_backlog(message)
 
 	def on_quit(self, c, event):
 		nick = event.source.split("!")[0]
-		quit_message = event.arguments[0]
+		try:
+			quit_message = event.arguments[0]
+		except IndexError:
+			quit_message = ""
 		message = "*** Quits: {} ({})".format(nick, quit_message)
-
+		
 		self.add_to_backlog(message)
 
 	def on_kick(self, c, event):
