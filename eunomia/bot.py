@@ -127,8 +127,15 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def on_mode(self, c, event):
 		changer_nick = event.source.split("!")[0]
-		changee_nick = event.arguments[1]
 		mode_change = event.arguments[0]
+		try:
+			changee_nick = event.arguments[1]
+		except IndexError:
+			# This is normal if channel modes are changed,
+			# len(event.arguments) is 1, so there is no event.arguments[1].
+			# The target is the channel, so set changee_nick to the current channel (event.target)
+			changee_nick = event.target
+
 		message = "*** Mode: {} {} by {}".format(mode_change, changee_nick, changer_nick)
 
 		self.add_to_backlog(message)
