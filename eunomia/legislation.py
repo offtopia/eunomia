@@ -108,7 +108,7 @@ class Legislation:
 			if packed == None:
 				self.logger.debug("packed==None")
 				self.votecount = 0
-				return
+				return backlog
 			else:
 				(nick, back_x) = packed
 				if nick == None:
@@ -160,12 +160,15 @@ class Legislation:
 			if self.votecount == 3:
 				if self.active_proposal == None:
 					self.active_proposal = len(backlog) - 1
-				# self.legislate() sets self.votecount to 0, so we don't need to worry about it.
-				self.legislate(backlog[self.active_proposal], backlog[self.active_proposal - 25:])
-				return
+				if backlog[self.active_proposal].can_legislate == True:
+					# self.legislate() sets self.votecount to 0, so we don't need to worry about it.	
+					backlog[self.active_proposal].can_legislate = False
+					self.legislate(backlog[self.active_proposal], backlog[self.active_proposal - 25:])
+				return backlog
 
 		# Cleanup
 		self.votecount = 0
+		return backlog
 
 	def legislate(self, message, context):
 		""" Legislates a given message and context, writes these to file ``pending_proposals.txt``
