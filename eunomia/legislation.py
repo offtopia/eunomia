@@ -114,13 +114,25 @@ class Legislation:
 				if nick == None:
 					if back_x == 0:
 						self.logger.debug("Basic ':D'")
-						self.votecount += 1
-						""" Active proposal is not set here.
-	                        If it were, it would break 'nick: :D' referencing (and probably other things.)
-                        	Also, it's pointless - either the referencing will be covered in
-                        	the amount of backlog to be stored, or the reference will be stored properly
-                        	by a 'more complex' reference (like 'nick: :D')
-                        """
+						# Walk in reverse until we find a non-basic :D or a proposal.
+						for i in range(i, -1, -1):
+							d_packed = self.get_packed_vote_index(backlog[i].message)
+							if d_packed == None:
+								# It's a proposal.
+								if i == self.active_proposal:
+									self.votecount += 1
+								else:
+									self.votecount = 1
+									self.active_proposal = i
+									
+								break
+							(d_nick, d_back_x) = packed
+							if d_nick == None and d_back_x == 0:
+								# Basic :D, keep going.
+								continue
+							elif d_nick != None or d_back_x != 0:
+								# We ran into something else entirely. Probably a vote. Quit.
+								break
 					else:
 						self.logger.debug("':D~expr/:D~N'")
 						self.votecount += 1
