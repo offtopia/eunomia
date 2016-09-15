@@ -103,6 +103,9 @@ class Legislation:
 			current_message = backlog[i].message
 			self.logger.debug("Current message=" + current_message)
 
+			if current_message.startswith("*** Joins") or current_message.startswith("*** Parts") or current_message.startswith("*** Quits"):
+				continue
+
 			packed = self.get_packed_vote_index(current_message)
 
 			if packed == None:
