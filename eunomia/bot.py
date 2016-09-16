@@ -1,4 +1,7 @@
 import importlib
+import signal
+import sys
+
 import irc.bot
 import irc.strings
 import logging
@@ -47,11 +50,16 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.pretty_version = pretty_version
 
+		signal.signal(signal.SIGTERM, self.shutdown_handler)
+		signal.signal(signal.SIGINT, self.shutdown_handler)
+
 	def on_nicknameinuse(self, c, event):
 		c.nick(c.get_nickname() + "_")
 		self.logger.info("Nickname {} was in use. Trying {}.".format(c.get_nickname(), c.get_nickname() + "_"))
 
 	def on_welcome(self, c, event):
+		self.channel_logger.append_log_begin_message()
+		
 		c.join(self.channel)
 		self.logger.info("Connection complete.")
 
@@ -204,3 +212,16 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		# Add to the channel logs, too.
 		self.channel_logger.append("{} {}".format(message.timestamp, message.message))
+
+	def shutdown_handler(self, signum, frame):
+		""" Called when a SIGTERM, or SIGINT event is handled.
+			Just calls "shutdown" in turn, which performs all cleanup.
+		"""
+		self.logger.info("SIGTERM or SIGINT caught. (signum {})".format(signum))
+		self.shutdown()
+
+	def shutdown(self):
+		self.channel_logger.append_log_end_message()
+		self.logger.info("Shutting down.")
+		sys.exit(0)
+		

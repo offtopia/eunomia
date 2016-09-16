@@ -81,6 +81,16 @@ class ChannelLogger(RolloverLogger):
 
 		super().__init__("channel", channel_name)
 
+	# TODO: Unify timestamp formatting between this and the legislation module.
+
+	def append_log_begin_message(self):
+		time_now = datetime.datetime.utcnow()
+		self.append("{:02d}:{:02d}:{:02d} --- log begin ---".format(time_now.hour, time_now.minute, time_now.second))
+
+	def append_log_end_message(self):
+		time_now = datetime.datetime.utcnow()
+		self.append("{:02d}:{:02d}:{:02d} --- log end ---".format(time_now.hour, time_now.minute, time_now.second))
+
 class ProposalLogger(RolloverLogger):
 	""" Handles logging of proposals to disk.
 	"""
