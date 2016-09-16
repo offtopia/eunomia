@@ -4,3 +4,4 @@ env/
 eunomia.log
 pending_proposals.txt
 logs/
+docs/_build/
