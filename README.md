@@ -28,4 +28,9 @@ Proposal logs are located in `logs/proposal/[channel name]/date_time.log`
 
 ## Documentation
 Documentation is automatically generated from docstrings with Sphinx.  
-To view documentation, point a browser at `file://clone_location/docs/_build/html/index.html`
+To generate documentation:
+Change to the docs dir:  
+`cd docs/`  
+Generate the documentation:  
+`make html`
+Open 'docs/_build/html/index.html' in a browser.
