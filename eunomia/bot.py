@@ -1,3 +1,4 @@
+import importlib
 import irc.bot
 import irc.strings
 import logging
@@ -20,6 +21,9 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.logger.addHandler(fh)
 		self.logger.addHandler(sh)
+
+		self.file_log_handler = fh
+		self.stream_log_handler = sh
 
 		self.logger.info("Logging initialized.")
 		irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
@@ -67,7 +71,8 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 	def on_pubmsg(self, c, event):
 		message = event.arguments[0]
-		message = "<{}> {}".format(event.source.split("!")[0], message)
+		sender = event.source.split("!")[0]
+		message = "<{}> {}".format(sender, message)
 
 		timestamp = datetime.datetime.utcnow().time()
 
@@ -77,6 +82,17 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 
 		self.backlog = self.legislator.dereference_if_vote(mbi, self.backlog)
 
+		a = event.arguments[0].split(":", 1)
+		if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
+			command = a[1].strip()
+			self.logger.info("Command \"{}\" sent by \"{}\"".format(command, sender))
+			if command == "reload-legislation":
+				self.logger.info("Reloading legislation.")
+				importlib.reload(legislation)
+				self.legislator = legislation.Legislation(self.file_log_handler, self.stream_log_handler, self.channel)
+			else:
+				self.logger.warning("Command \"{}\" unknown.".format(command))
+			
 	def on_dccmsg(self, c, event):
 		self.logger.error("on_dccmsg called but not implemented!")
 
