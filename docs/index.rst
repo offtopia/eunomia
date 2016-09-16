@@ -13,6 +13,7 @@ Contents:
 
    legislation
    IRC Logging <eunomialog>
+   EunomiaBot <bot>
 
 Indices and tables
 ==================
