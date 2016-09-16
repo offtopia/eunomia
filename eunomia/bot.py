@@ -221,6 +221,8 @@ class EunomiaBot(irc.bot.SingleServerIRCBot):
 		self.shutdown()
 
 	def shutdown(self):
+		""" Logs the shutdown, appends "log end" messages, exits gracefully.
+		"""
 		self.channel_logger.append_log_end_message()
 		self.logger.info("Shutting down.")
 		sys.exit(0)
